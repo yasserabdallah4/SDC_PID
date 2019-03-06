@@ -1,8 +1,32 @@
 #ifndef PID_H
 #define PID_H
 
-class PID {
- public:
+class PID
+{
+public:
+  /*
+	 * Errors
+	 */
+  double int_val;
+  double last_int_val;
+  double last_error;
+
+  /*
+	 * Coefficients
+	 */
+  double Kp;
+  double Ki;
+  double Kd;
+
+  // current Value of total Error
+  double val;
+  double integral;
+  double derivative;
+  double y;
+
+  double min_val;
+  double max_val;
+
   /**
    * Constructor
    */
@@ -17,34 +41,12 @@ class PID {
    * Initialize PID.
    * @param (Kp_, Ki_, Kd_) The initial PID coefficients
    */
-  void Init(double Kp_, double Ki_, double Kd_);
+  void Init(double lKp, double lKi, double lKd, double mn, double mx);
 
-  /**
-   * Update the PID error variables given cross track error.
-   * @param cte The current cross track error
-   */
-  void UpdateError(double cte);
-
-  /**
-   * Calculate the total PID error.
-   * @output The total PID error
-   */
-  double TotalError();
-
- private:
-  /**
-   * PID Errors
-   */
-  double p_error;
-  double i_error;
-  double d_error;
-
-  /**
-   * PID Coefficients
-   */ 
-  double Kp;
-  double Ki;
-  double Kd;
+  /*
+	 * Output Value for PID instantiation
+	 */
+  double output(double error, double sample_time);
 };
 
-#endif  // PID_H
+#endif // PID_H
