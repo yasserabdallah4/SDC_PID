@@ -37,62 +37,43 @@ Fellow students have put together a guide to Windows set-up for the project [her
 
 Tips for setting up your environment can be found [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
 
-## Editor Settings
+## Concept
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+A proportional–integral–derivative controller (PID controlleer) is a control loop feedback mechanism widely used in industrial control systems
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+ A PID controller continuously calculates an error value e(t) as the difference between a desired setpoint (SP) and a measured process variable (PV) and applies a correction based on proportional, integral, and derivative terms. Term P is proportional to the current value of the SP − PV error e(t). Term I accounts for past values of the SP − PV error and integrates them over time to produce the I term. Term D is a best estimate of the future trend of the SP − PV error, based on its current rate of change.
 
-## Code Style
+## Coefficients
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+Kp: Is the Proportional Correction coefficient. It is responsible for the Direction and magnitude of the correction. However due to the momentum principle in control problems, Just using Kp will result in overshoot of the target state.
+Ki: Is the Integral Correction Coefficient. It is responsible for the elimination of the residual steady-state error that occurs with a pure proportional controller while increasing the speed of achieving target state. The momentum principle can plague the I controller as well so it is also prone to overshoot and oscillation
+Kd: Is the Differential Correction Coefficient. It is reponsbile for Dampening of the oscillation by being sensitive to the rate of change of instantaneous error rather than just pure magnitude or direction. Simply put, Kd will delay the achievement of target state but will also dampen and suppress the overshoot and oscillations.
 
-## Project Instructions and Rubric
+## PID applied to the Self Driving Car
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+This project required control of a Self Driving Car in the Simulator using the PID loop on the steering. Another sentiment expressed in the project writeups was to see how fast could the car go in the simulator while not going off track. Towards this I also added a PID controller on the Target speed. Details of this are explained in the Subsequent Section. 
 
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/e8235395-22dd-4b87-88e0-d108c5e5bbf4/concepts/6a4d8d42-6a04-4aa6-b284-1697c0fd6562)
-for instructions and the project rubric.
+## Tuning Methodology
 
-## Hints!
+The Following steps were followed during the tuning Iterations
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+A Steering gain was tuned heuristically to get the car to drive safely for one lap using the Kp, Ki, Kd values in there sensible order of magnitudes namely 0.1, 0.01, 1.0
+After the absolute values of the Kp, Ki, Kd were calculated that could complete one lap at 10 mph, the speed was gradually increased till the car could not complete one lap.
 
-## Call for IDE Profiles Pull Requests
+## Effect of Coefficients
 
-Help your fellow students!
+If Kp is too high, Car will oscillate too much both in the steering as well as the speed domain. There will be constant overshoot which can result in vehicle going offtrack at points where the margin for error is low. If Kp is too low the Car will have a tendency to understeer at turns and will go off track in certain cases.
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
+If Kd is too high, There is a lot of jitter in the system about the target position, If it is too low , The overshoot problem occuring from Kp, and Ki will not be dampened enough.
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+If Ki is too high, it can lead to historical error accumulation overpowering the instantaneous error and the rate of change components (Kp,Kd). If it is too low or absent, the controller will not be able to smoothen the correction curve.
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
+## Final Parameter Choice
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+Since 2 PIDs were used which sort of impact each other, the tuning had to progress both simultaneously as well as in alternate cycles once driving at higher speeds was attained.
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+The Final Parameter set was as follows
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+Steering Kp, Ki, Kd : (0.127221000, 0.000018, 2.5)
+Velocity Kp, Ki, Kd : (0.109170, 0.000754, 0.841226)
 
